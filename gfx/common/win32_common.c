@@ -141,6 +141,7 @@ typedef char win32_dwm_timing_info_size_check[
 #include <commdlg.h>
 #include <dbt.h>
 #include "../../input/input_keymaps.h"
+#include "../../rave/rave.h"
 #include <shellapi.h>
 
 #ifdef HAVE_MENU
@@ -2315,7 +2316,8 @@ void win32_set_window(unsigned *width, unsigned *height,
 #ifdef HAVE_MENU
       bool ui_menubar_enable    = settings->bools.ui_menubar_enable;
 
-      if (!fullscreen && ui_menubar_enable)
+      /* RAVE: SetWindowPos below would activate the hidden window. */
+      if (!fullscreen && ui_menubar_enable && !rave_hide_window())
       {
          HMENU menuItem;
          RECT rc_temp;
@@ -2334,12 +2336,16 @@ void win32_set_window(unsigned *width, unsigned *height,
       }
 #endif
 
-      ShowWindow(main_window.hwnd, SW_RESTORE);
-      UpdateWindow(main_window.hwnd);
-      SetForegroundWindow(main_window.hwnd);
+      /* RAVE: hidden + unfocused inside the game (picture goes out by Spout). */
+      if (!rave_hide_window())
+      {
+         ShowWindow(main_window.hwnd, SW_RESTORE);
+         UpdateWindow(main_window.hwnd);
+         SetForegroundWindow(main_window.hwnd);
 
-      if (window)
-         window->set_focused(&main_window);
+         if (window)
+            window->set_focused(&main_window);
+      }
    }
 
    win32_show_cursor(NULL, !fullscreen);

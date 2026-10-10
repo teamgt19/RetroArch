@@ -396,6 +396,11 @@ void rave_handle_vrcmd(const char *cmd)
       RARCH_LOG("[RAVE] VRCMD %s: not implemented yet.\n", cmd);
 }
 
+bool rave_hide_window(void)
+{
+   return rave_st.active && !rave_st.show_window;
+}
+
 bool rave_spout_wanted(void)
 {
    const char *core;

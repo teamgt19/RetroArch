@@ -74,6 +74,10 @@ void rave_handle_vrcmd(const char *cmd);
 /* Once per frame from the run loop: keep-alive, window hiding. */
 void rave_frame(void);
 
+/* True when RetroArch runs inside RAVE without --show-window: its window must never be shown or take the focus
+ * (win32_set_window skips ShowWindow / SetForegroundWindow) - the game window keeps the keyboard and the pads. */
+bool rave_hide_window(void);
+
 /* Writes "VRCMD <text>" to stdout for the game. */
 void rave_send(const char *text);
 

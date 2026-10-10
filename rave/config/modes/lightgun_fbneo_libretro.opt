@@ -1,0 +1,4 @@
+fbneo-lightgun-allow = "enabled"
+fbneo-lightgun-crosshair-emulation = "hide with lightgun device"
+fbneo-lightgun-hide-crosshair = "enabled"
+fbneo-lightgun-input = "lightgun"

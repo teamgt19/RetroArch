@@ -1,0 +1,148 @@
+{
+ "lightgun": {
+  "opera_libretro": {
+   "gun": "5",
+   "device_number": "4",
+   "folders": [
+    {
+     "folder": "3DO Interactive Multiplayer (Lightguns)",
+     "medium": "LightGun Arcade",
+     "gun": "5",
+     "device_number": "4"
+    }
+   ]
+  },
+  "wgc_libretro": {
+   "gun": "4",
+   "device_number": "1",
+   "folders": [
+    {
+     "folder": "Arcade (Capture) (Lightguns)",
+     "medium": "LightGun Arcade",
+     "gun": "4",
+     "device_number": "1"
+    },
+    {
+     "folder": "Sony Playstation 2 (Capture) (Lightguns)",
+     "medium": "PlayStation 2 (DVD)",
+     "gun": "4",
+     "device_number": "1"
+    },
+    {
+     "folder": "Sony Playstation 3 (Lightguns)",
+     "medium": "PlayStation 3",
+     "gun": "4",
+     "device_number": "1"
+    }
+   ]
+  },
+  "fbneo_libretro": {
+   "gun": "4",
+   "device_number": "1",
+   "folders": [
+    {
+     "folder": "Arcade (Lightguns)",
+     "medium": "LightGun Arcade",
+     "gun": "4",
+     "device_number": "1"
+    }
+   ]
+  },
+  "flycast_libretro": {
+   "gun": "6",
+   "device_number": "4",
+   "folders": [
+    {
+     "folder": "Dreamcast-Naomi-Atomiswave (Lightguns)",
+     "medium": "LightGun Arcade",
+     "gun": "6",
+     "device_number": "4"
+    }
+   ]
+  },
+  "mame_libretro": {
+   "gun": "4",
+   "device_number": "1",
+   "folders": [
+    {
+     "folder": "MAME (Lightguns)",
+     "medium": "LightGun Arcade",
+     "gun": "4",
+     "device_number": "1"
+    }
+   ]
+  },
+  "fceumm_libretro": {
+   "gun": "1",
+   "device_number": "2260",
+   "folders": [
+    {
+     "folder": "Nintendo Entertainment System (Lightguns)",
+     "medium": "LightGun Arcade",
+     "gun": "1",
+     "device_number": "2260"
+    }
+   ]
+  },
+  "genesis_plus_gx_libretro": {
+   "gun": "3",
+   "device_number": "1",
+   "folders": [
+    {
+     "folder": "Sega Genesis (Lightguns)",
+     "medium": "Sega Genesis",
+     "gun": "3",
+     "device_number": "1"
+    }
+   ]
+  },
+  "mednafen_saturn_libretro": {
+   "gun": "6",
+   "device_number": "516",
+   "folders": [
+    {
+     "folder": "Sega Saturn (Lightguns)",
+     "medium": "LightGun Arcade",
+     "gun": "6",
+     "device_number": "516"
+    }
+   ]
+  },
+  "mednafen_psx_libretro": {
+   "gun": "4",
+   "device_number": "260",
+   "folders": [
+    {
+     "folder": "Sony PlayStation (Lightguns)",
+     "medium": "LightGun Arcade",
+     "gun": "4",
+     "device_number": "260"
+    }
+   ]
+  },
+  "pcsx2_libretro": {
+   "gun": "4",
+   "device_number": null,
+   "folders": [
+    {
+     "folder": "Sony PlayStation 2 (Lightguns)",
+     "medium": "PlayStation 2 (DVD)",
+     "gun": "4",
+     "device_number": null
+    }
+   ]
+  },
+  "snes9x_libretro": {
+   "gun": "3",
+   "device_number": "1",
+   "folders": [
+    {
+     "folder": "Super Nintendo Entertainment System (Lightguns)",
+     "medium": "SNES",
+     "gun": "3",
+     "device_number": "1"
+    }
+   ]
+  }
+ }
+}

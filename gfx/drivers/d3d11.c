@@ -5991,9 +5991,27 @@ static bool d3d11_gfx_frame_body(
             uuidof(ID3D11Texture2D), (void**)&rave_final);
       if (rave_final)
       {
+         struct retro_game_geometry *rave_geom = &video_state_get_ptr()->av_info.geometry;
+         unsigned rave_w = rave_geom->base_width;
+         unsigned rave_h = rave_geom->base_height;
+         unsigned rave_vx = (unsigned)d3d11->frame.viewport.TopLeftX;
+         unsigned rave_vy = (unsigned)d3d11->frame.viewport.TopLeftY;
+         unsigned rave_vw = (unsigned)d3d11->frame.viewport.Width;
+         unsigned rave_vh = (unsigned)d3d11->frame.viewport.Height;
+         if (retroarch_get_rotation() & 1)
+         {
+            unsigned t = rave_w;
+            rave_w     = rave_h;
+            rave_h     = t;
+         }
          rave_final->lpVtbl->GetDesc(rave_final, &rave_desc);
-         rave_spout_send_d3d11_region(d3d11->device, (D3D11Resource)rave_final,
-               0, 0, rave_desc.Width, rave_desc.Height);
+         /* Menu: the whole window, readable. Game: its rectangle at the core's resolution. */
+         if (menu_is_alive || !rave_w || !rave_h || rave_vw < rave_w || rave_vh < rave_h)
+            rave_spout_send_d3d11_region(d3d11->device, (D3D11Resource)rave_final,
+                  0, 0, rave_desc.Width, rave_desc.Height);
+         else
+            rave_spout_send_d3d11_region_scaled(d3d11->device, (D3D11Resource)rave_final,
+                  rave_vx, rave_vy, rave_vw, rave_vh, rave_w, rave_h);
          Release(rave_final);
       }
    }

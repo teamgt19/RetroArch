@@ -183,6 +183,13 @@ extern "C" void rave_spout_send_d3d11(void *device, void *frame_srv, unsigned wi
  * the same way as the raw frame. */
 extern "C" void rave_spout_send_d3d11_region(void *device, void *texture2d, unsigned x, unsigned y, unsigned width, unsigned height)
 {
+   rave_spout_send_d3d11_region_scaled(device, texture2d, x, y, width, height, width, height);
+}
+
+/* Point sampled to out_width x out_height: RAVE sizes its CRT mask and scanlines per texel. */
+extern "C" void rave_spout_send_d3d11_region_scaled(void *device, void *texture2d, unsigned x, unsigned y, unsigned width, unsigned height,
+      unsigned out_width, unsigned out_height)
+{
    ID3D11Device *dev = (ID3D11Device*)device;
    ID3D11Resource *res = (ID3D11Resource*)texture2d;
    ID3D11Texture2D *source = nullptr;
@@ -228,12 +235,12 @@ extern "C" void rave_spout_send_d3d11_region(void *device, void *texture2d, unsi
          return;
       }
       g.copyW = width; g.copyH = height; g.copyFmt = sd.Format;
-      RARCH_LOG("[RAVE] Sending the SHADED picture: %u x %u (RetroArch shader preset on).\n", width, height);
+      RARCH_LOG("[RAVE] Sending the final picture: %u x %u of the window, as %u x %u.\n", width, height, out_width, out_height);
    }
    box.left = x; box.top = y; box.front = 0; box.right = x + width; box.bottom = y + height; box.back = 1;
    g.ctx1->CopySubresourceRegion(g.copy, 0, 0, 0, 0, source, 0, &box);
    source->Release();
-   rave_spout_send_d3d11(device, g.copySrv, width, height);
+   rave_spout_send_d3d11(device, g.copySrv, out_width, out_height);
 }
 
 /* Any other video driver (the OpenGL fallback when NVIDIA Smooth Motion hooks D3D11): the core's CPU frame, converted

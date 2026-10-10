@@ -22,6 +22,10 @@ void rave_spout_send_d3d11(void *device, void *frame_srv, unsigned width, unsign
  * drew into (the back buffer), x / y / width / height = the game's viewport rectangle in it. */
 void rave_spout_send_d3d11_region(void *device, void *texture2d, unsigned x, unsigned y, unsigned width, unsigned height);
 
+/* The same rectangle sent at out_width x out_height. */
+void rave_spout_send_d3d11_region_scaled(void *device, void *texture2d, unsigned x, unsigned y, unsigned width, unsigned height,
+      unsigned out_width, unsigned out_height);
+
 /* Same values as enum retro_pixel_format. */
 #define RAVE_PIXFMT_0RGB1555 0
 #define RAVE_PIXFMT_XRGB8888 1

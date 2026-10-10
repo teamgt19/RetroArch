@@ -89,6 +89,7 @@
 #include "../tasks/tasks_internal.h"
 #include "../verbosity.h"
 #include "../gfx/video_driver.h"
+#include "../rave/rave.h"
 
 #ifdef ANDROID
 #include "../frontend/drivers/platform_unix.h"
@@ -555,7 +556,9 @@ const input_device_driver_t *input_driver_joypad_for_read(
 static void input_driver_update_joypad_focus(
       input_driver_state_t *input_st, const settings_t *settings)
 {
+   /* RAVE: the pads come from the game; the hidden window never has focus. */
    if (     !settings->bools.input_joypad_background
+         && !rave_get_state()->active
          && !video_driver_has_focus())
       input_st->flags |=  INP_FLAG_JOYPAD_UNFOCUSED;
    else

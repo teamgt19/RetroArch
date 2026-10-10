@@ -5225,13 +5225,6 @@ static bool d3d11_gfx_frame_body(
       else if (d3d11->frame.texture[0].staging)
          d3d11_update_texture(
                context, width, height, pitch, d3d11->format, frame, &d3d11->frame.texture[0]);
-
-      /* RAVE: the core's new frame to the game by Spout - the raw frame, unless a shader preset is on: then the
-       * shaded picture is sent after the last pass (below). */
-      if (rave_spout_wanted() && !(d3d11->shader_preset && d3d11->shader_preset->passes))
-         rave_spout_send_d3d11(d3d11->device,
-               d3d11->hw_direct.view ? (void*)d3d11->hw_direct.view : (void*)d3d11->frame.texture[0].view,
-               width, height);
    }
 
 #ifdef D3D11_ROLLING_SCANLINE_SIMULATION
@@ -5602,26 +5595,6 @@ static bool d3d11_gfx_frame_body(
 
    context->lpVtbl->Draw(context, 4, 0);
 
-   /* RAVE: a shader preset is on - the game gets the picture AFTER the shader passes: the game's viewport rectangle
-    * of what was just drawn (before the menu, overlays and on-screen text go on top). Not with HDR output, where
-    * this draw goes into an intermediate buffer in another colour space. */
-   if (rave_spout_wanted() && d3d11->shader_preset && d3d11->shader_preset->passes && rtv
-#ifdef HAVE_DXGI_HDR
-         && !(d3d11->flags & D3D11_ST_FLAG_HDR_ENABLE)
-#endif
-      )
-   {
-      D3D11Resource rave_shaded = NULL;
-      rtv->lpVtbl->GetResource(rtv, &rave_shaded);
-      if (rave_shaded)
-      {
-         rave_spout_send_d3d11_region(d3d11->device, rave_shaded,
-               (unsigned)(d3d11->frame.viewport.TopLeftX > 0 ? d3d11->frame.viewport.TopLeftX : 0),
-               (unsigned)(d3d11->frame.viewport.TopLeftY > 0 ? d3d11->frame.viewport.TopLeftY : 0),
-               (unsigned)d3d11->frame.viewport.Width, (unsigned)d3d11->frame.viewport.Height);
-         rave_shaded->lpVtbl->Release(rave_shaded);
-      }
-   }
 
 #ifdef HAVE_DXGI_HDR
    /* Copy over back buffer to swap chain render targets */
@@ -6003,6 +5976,27 @@ static bool d3d11_gfx_frame_body(
             D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
    }
 #endif
+
+   /* RAVE: the final frame (game, menu, overlays, text) to the game by Spout. */
+   if (     rave_spout_wanted()
+         && !(d3d11->flags & D3D11_ST_FLAG_FRAME_DUPE_LOCK)
+#ifdef HAVE_DXGI_HDR
+         && !(d3d11->flags & D3D11_ST_FLAG_HDR_ENABLE)
+#endif
+      )
+   {
+      D3D11Texture2D rave_final = NULL;
+      D3D11_TEXTURE2D_DESC rave_desc;
+      d3d11->swapChain->lpVtbl->GetBuffer(d3d11->swapChain, 0,
+            uuidof(ID3D11Texture2D), (void**)&rave_final);
+      if (rave_final)
+      {
+         rave_final->lpVtbl->GetDesc(rave_final, &rave_desc);
+         rave_spout_send_d3d11_region(d3d11->device, (D3D11Resource)rave_final,
+               0, 0, rave_desc.Width, rave_desc.Height);
+         Release(rave_final);
+      }
+   }
 
    /* The backbuffer is undefined after a flip-model present, so the
     * copy is taken now. Not from the BFI light dupes, which recurse in

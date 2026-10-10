@@ -2286,6 +2286,26 @@ static int seek_adjust(int target)
    return 0;
 }
 
+/* RAVE: the game's VIDEO commands. RAVE's RetroArch looks these up by name in the loaded core; seeks are queued and
+ * applied in retro_run like the core's own seek buttons. */
+static double rave_pending_seek_rel = 0.0;
+static double rave_pending_seek_abs = -1.0;
+
+RETRO_API void CORE_PREFIX(rave_video_seek)(double seconds, int absolute)
+{
+   if (absolute)
+      rave_pending_seek_abs = seconds < 0.0 ? 0.0 : seconds;
+   else
+      rave_pending_seek_rel += seconds;
+}
+
+RETRO_API int64_t CORE_PREFIX(rave_video_time_ms)(void)
+{
+   if (MEDIA_STR.interpolate_fps <= 0.0)
+      return 0;
+   return (int64_t)((double)g_ctx.decoded_frame_cnt * 1000.0 / MEDIA_STR.interpolate_fps);
+}
+
 void CORE_PREFIX(retro_run)(void)
 {
    double min_pts;
@@ -2450,6 +2470,18 @@ void CORE_PREFIX(retro_run)(void)
       seek_frames = -1;
       seek_frame(seek_frames);
       RESET_TRIGGERED_STR = false;
+   }
+
+   /* RAVE: queued VIDEO SEEK / SEEK_FRAMES. */
+   if (rave_pending_seek_abs >= 0.0)
+   {
+      seek_frames += (int)(rave_pending_seek_abs * MEDIA_STR.interpolate_fps) - (int)g_ctx.decoded_frame_cnt;
+      rave_pending_seek_abs = -1.0;
+   }
+   if (rave_pending_seek_rel != 0.0)
+   {
+      seek_frames += (int)(rave_pending_seek_rel * MEDIA_STR.interpolate_fps);
+      rave_pending_seek_rel = 0.0;
    }
 
    /* Push seek request to thread,

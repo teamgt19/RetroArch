@@ -101,6 +101,7 @@ static bool audio_driver_pipeline_transport_publish(uint32_t tempo_q16,
 #include "../runloop.h"
 #include "../midi_driver.h"
 #include "../verbosity.h"
+#include "../rave/rave.h"
 
 /* Largest number of int16 samples handed to audio_driver_flush() in one
  * call. The batch callback slices anything bigger into pieces of this
@@ -3002,6 +3003,9 @@ static void audio_driver_flush(audio_driver_state_t *audio_st,
 
    /* Record the core's delivered sample format for the statistics overlay. */
    audio_st->stat_core_is_float = is_float;
+
+   /* RAVE: positional audio - the game's PAN matrix. */
+   data = rave_pan_audio(data, samples, is_float);
 
    if (audio_st->resume_topup_pending)
       audio_driver_resume_topup(audio_st);

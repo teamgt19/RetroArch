@@ -56,6 +56,7 @@
 #endif
 #include "autosave.h"
 #include "command.h"
+#include "rave/rave.h"
 #include "core_info.h"
 #include "playlist.h"
 #include <queues/task_queue.h>
@@ -159,6 +160,13 @@ static void command_parse_sub_msg(command_t *handle, const char *tok)
 {
    const char *arg = NULL;
    unsigned index  = 0;
+
+   /* RAVE: "VRCMD ..." lines are the game's pipe commands (rave/rave.c). */
+   if (strncmp(tok, "VRCMD ", 6) == 0)
+   {
+      rave_handle_vrcmd(tok + 6);
+      return;
+   }
 
    if (command_get_arg(tok, &arg, &index))
    {

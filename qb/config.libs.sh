@@ -228,6 +228,10 @@ check_enabled NETWORKING HAVE_NETPLAYDISCOVERY 'Netplay discovery' 'Networking i
 check_enabled NETWORKING NETWORKGAMEPAD 'the networked game pad' 'Networking is' true
 
 check_lib '' STDIN_CMD "$CLIB" fcntl
+# RAVE: Windows reads stdin commands from a pipe without fcntl (libretro-common stdin_stream.c).
+if [ "$OS" = 'Win32' ]; then
+   add_opt STDIN_CMD yes
+fi
 
 if [ "$HAVE_NETWORK_CMD" = "yes" ] || [ "$HAVE_STDIN_CMD" = "yes" ]; then
    add_opt COMMAND yes

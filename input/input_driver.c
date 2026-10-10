@@ -347,6 +347,7 @@ input_device_driver_t *joypad_drivers[] = {
 #ifdef HAVE_XINPUT
    &xinput_joypad,
 #endif
+   &rave_joypad, /* RAVE */
 #ifdef GEKKO
    &gx_joypad,
 #endif
@@ -472,6 +473,7 @@ input_driver_t *input_drivers[] = {
 #ifdef HAVE_DINPUT
    &input_dinput,
 #endif
+   &input_rave, /* RAVE */
 #if defined(HAVE_SDL2) && !defined(HAVE_COCOA)
    &input_sdl2,
 #elif defined(HAVE_SDL) && !defined(HAVE_COCOA)

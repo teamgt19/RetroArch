@@ -240,6 +240,22 @@ ifeq ($(HAVE_RMP3), 1)
    OBJ += $(LIBRETRO_COMM_DIR)/formats/mp3/rmp3.o
 endif
 
+OBJ += rave/rave.o \
+       input/drivers/rave_input.o \
+       input/drivers_joypad/rave_joypad.o
+
+ifeq ($(HAVE_D3D11), 1)
+   OBJ += rave/rave_spout.o \
+          rave/spout/SpoutDX.o \
+          rave/spout/SpoutDirectX.o \
+          rave/spout/SpoutSenderNames.o \
+          rave/spout/SpoutSharedMemory.o \
+          rave/spout/SpoutFrameCount.o \
+          rave/spout/SpoutUtils.o \
+          rave/spout/SpoutCopy.o
+   LIBS += -lshlwapi -lwinmm -lversion
+endif
+
 OBJ += frontend/frontend_driver.o \
        retroarch.o \
        runloop.o \

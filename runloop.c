@@ -121,6 +121,7 @@ bool android_get_vfs_authorized_locations(
 
 #include "runtime_file.h"
 #include "runloop.h"
+#include "rave/rave.h"
 #include "camera/camera_driver.h"
 #include "location_driver.h"
 #include "record/record_driver.h"
@@ -1185,6 +1186,15 @@ static void runloop_deinit_core_options(
       const char *path_core_options,
       core_option_manager_t *core_options)
 {
+   if (rave_keep_core_options())
+   {
+      if (path_core_options && *path_core_options)
+         path_clear(RARCH_PATH_CORE_OPTIONS);
+      if (core_options)
+         core_option_manager_free(core_options);
+      return;
+   }
+
    /* Check whether game-specific options file is being used */
    if (path_core_options && *path_core_options)
    {
@@ -1422,9 +1432,9 @@ static core_option_manager_t *runloop_init_core_options(
          options_path, sizeof(options_path),
          src_options_path, sizeof(src_options_path));
    if (*options_path)
-      return core_option_manager_new(options_path,
+      return rave_apply_core_options(core_option_manager_new(options_path,
             src_options_path, options_v2,
-            categories_enabled);
+            categories_enabled));
    return NULL;
 }
 
@@ -1450,7 +1460,8 @@ static core_option_manager_t *runloop_init_core_variables(
          src_options_path, sizeof(src_options_path));
 
    if (*options_path)
-      return core_option_manager_new_vars(options_path, src_options_path, vars);
+      return rave_apply_core_options(
+            core_option_manager_new_vars(options_path, src_options_path, vars));
    return NULL;
 }
 
@@ -6033,7 +6044,7 @@ static bool runloop_core_options_write(const char **out_path)
 
    /* If there are no core options, there
     * is nothing to do */
-   if (!coreopts || (coreopts->size < 1))
+   if (!coreopts || (coreopts->size < 1) || rave_keep_core_options())
       return true;
 
    /* Check whether game/folder-specific options file
@@ -8371,6 +8382,8 @@ int runloop_iterate(void)
    float slowmotion_ratio                 = settings->floats.slowmotion_ratio;
    bool audio_sync                        = settings->bools.audio_sync;
    bool savestate_automatic_enable        = settings->uints.savestate_automatic_interval > 0;
+
+   rave_frame(); /* RAVE */
 
    runloop_msg_queue_drain_deferred();
 

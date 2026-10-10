@@ -132,6 +132,7 @@
 #include "location_driver.h"
 
 #include "runloop.h"
+#include "rave/rave.h"
 #include "camera/camera_driver.h"
 #include "location_driver.h"
 #include "record/record_driver.h"
@@ -8033,9 +8034,11 @@ static bool retroarch_parse_input_and_config(
    verbosity_enabled = verbosity_is_enabled();
    /* Init logging after config load only if not overridden by command line argument.
     * This handles when logging is set in the config but not via the --log-file option. */
-   if (verbosity_enabled && !retroarch_override_setting_is_set(RARCH_OVERRIDE_SETTING_LOG_TO_FILE, NULL))
+   /* --log-file with verbosity from the config (no -v) lands here too. */
+   if (verbosity_enabled)
       rarch_log_file_init(
-            settings->bools.log_to_file,
+            retroarch_override_setting_is_set(RARCH_OVERRIDE_SETTING_LOG_TO_FILE, NULL)
+            || settings->bools.log_to_file,
             settings->bools.log_to_file_timestamp,
             settings->paths.log_dir);
 
@@ -8672,6 +8675,8 @@ static void retroarch_find_drivers(settings_t *settings,
 bool retroarch_main_init_core(int argc, char *argv[],
       bool find_drivers, bool *verbosity)
 {
+   /* RAVE: take --rave / --emuvr / --ttl / --headless ... out before RetroArch parses the rest. */
+   rave_parse_args(&argc, argv);
 #if defined(DEBUG) && defined(HAVE_DRMINGW)
    char log_file_name[128];
 #endif

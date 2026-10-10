@@ -165,6 +165,10 @@ ifeq ($(platform), unix)
                  $(LIBRETRO_COMM_DIR)/file/file_path_io.c \
                  $(LIBRETRO_COMM_DIR)/time/rtime.c
 endif
+# RAVE: features_cpu.c needs retro_sleep_us on Windows too.
+ifeq ($(platform), win)
+	SOURCES_C += $(LIBRETRO_COMM_DIR)/time/rtime.c
+endif
 endif
 
 ifeq ($(HAVE_PTHREADS),1)

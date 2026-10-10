@@ -19,6 +19,7 @@
 #pragma comment(lib, "ws2_32")
 #endif
 
+#include "../../rave/rave.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>  /* uintptr_t, for the query generation token */
@@ -7113,6 +7114,7 @@ static int init_tcp_connection(netplay_t *netplay, const struct addrinfo *addr,
       }
       else
          _msg = "Failed to connect to host.";
+      rave_send("HOST_UNREACHABLE"); /* RAVE: the game counts these and tells the player to forward ports */
    }
    else if (is_mitm)
    {

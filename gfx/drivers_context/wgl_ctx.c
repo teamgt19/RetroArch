@@ -715,6 +715,17 @@ static void gfx_ctx_wgl_input_driver(void *data,
 {
    settings_t *settings     = config_get_ptr();
 
+   /* RAVE: all input comes over the game's pipe. */
+   if (string_is_equal(settings->arrays.input_driver, "rave"))
+   {
+      *input_data = input_driver_init_wrap(&input_rave, joypad_name);
+      *input      = *input_data ? &input_rave : NULL;
+#ifdef HAVE_DINPUT
+      dinput_wgl  = NULL;
+#endif
+      return;
+   }
+
 #if _WIN32_WINNT >= 0x0501
 #ifdef HAVE_WINRAWINPUT
    const char *input_driver = settings->arrays.input_driver;

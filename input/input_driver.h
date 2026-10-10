@@ -1375,6 +1375,7 @@ extern input_driver_t input_sdl2;
 extern input_driver_t input_sdl3;
 extern input_driver_t input_sdl_dingux;
 extern input_driver_t input_dinput;
+extern input_driver_t input_rave;            /* RAVE: pipe-fed keyboard + lightgun */
 extern input_driver_t input_x;
 extern input_driver_t input_ps4;
 extern input_driver_t input_ps3;
@@ -1402,6 +1403,7 @@ extern input_device_driver_t linuxraw_joypad;
 extern input_device_driver_t parport_joypad;
 extern input_device_driver_t udev_joypad;
 extern input_device_driver_t xinput_joypad;
+extern input_device_driver_t rave_joypad;    /* RAVE: pipe-fed pads */
 extern input_device_driver_t sdl1_joypad; /** SDL1. @see sdl1_joypad.c */
 extern input_device_driver_t sdl2_joypad; /** SDL2. @see sdl2_joypad.c */
 extern input_device_driver_t sdl_dingux_joypad;

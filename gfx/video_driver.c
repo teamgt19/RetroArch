@@ -37,6 +37,8 @@
 #include "../config.def.h"
 
 #include "video_driver.h"
+#include "../rave/rave.h"
+#include "../rave/rave_spout.h"
 #include "gfx_instrument.h"
 
 /* Decided here, at the top, because an #ifdef on a macro defined
@@ -6756,6 +6758,14 @@ void video_driver_frame(const void *data, unsigned width,
 
    status_text[0]                 = '\0';
    video_driver_msg[0]            = '\0';
+
+#ifdef HAVE_D3D11
+   /* RAVE: Spout from the core's CPU frame when the video driver is not D3D11 (that one sends from the GPU). */
+   if (     data && data != RETRO_HW_FRAME_BUFFER_VALID
+         && !(vid && string_is_equal(vid->ident, "d3d11"))
+         && rave_spout_wanted())
+      rave_spout_send_pixels(data, width, height, pitch, (int)video_driver_pix_fmt);
+#endif
 
    if (!video_driver_active)
       return;

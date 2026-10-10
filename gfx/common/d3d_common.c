@@ -67,6 +67,13 @@ void d3d_input_driver(const char* input_name, const char* joypad_name,
    *input          = xinput ? (input_driver_t*)&input_xinput : NULL;
    *input_data     = xinput;
 #else
+   /* RAVE: all input comes over the game's pipe. */
+   if (string_is_equal(input_name, "rave"))
+   {
+      *input_data = input_driver_init_wrap(&input_rave, joypad_name);
+      *input      = *input_data ? &input_rave : NULL;
+      return;
+   }
 #if _WIN32_WINNT >= 0x0501
 #ifdef HAVE_WINRAWINPUT
    /* winraw only available since XP */

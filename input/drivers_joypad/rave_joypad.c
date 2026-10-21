@@ -7,7 +7,7 @@
 
 /* I look exactly like RetroArch's XInput pad (buttons 0 A .. 10 Guide, D-pad as hat 0, axes 0 LX, 1 LY, 2 RX, 3 RY,
  * 4 LT, 5 RT), so the game's numbering and the "RAVE Pad" autoconfig profile (a copy of the XInput one) line up.
- * Four pads, one per player: the game's commands carry the player number ("BINPUT P2 ..."; none = player 1). */
+ * Eight pads (RAVE_MAX_PORTS), one per player: the game's commands carry the player number ("BINPUT P2 ..."; none = player 1). */
 
 #include <stdlib.h>
 #include <string.h>

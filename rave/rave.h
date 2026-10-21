@@ -14,7 +14,10 @@
 
 RETRO_BEGIN_DECLS
 
-#define RAVE_MAX_PORTS      4
+/* Eight players (Jim 2026-10-21): up to 4 real pads come in through the game, and every port also takes the game's own
+ * commands - cabinet buttons pressed in VR, held wheels / sticks, netplay players - so 6-player cabinets (X-Men) and up fit.
+ * The command prefix reads P1..P9; P9 and above are dropped. */
+#define RAVE_MAX_PORTS      8
 /* Pad buttons as the game numbers them (RetroArch's XInput order): 0 A .. 10 Guide, 11-14 D-pad
  * (right, left, down, up), 15 D-pad modifier, 16/17 triggers as buttons. */
 #define RAVE_PAD_BUTTONS    18

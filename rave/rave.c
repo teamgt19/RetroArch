@@ -249,7 +249,7 @@ static void rave_key(bool down, unsigned key)
    input_keyboard_event(down, key, (key < 128) ? key : 0, 0, RETRO_DEVICE_KEYBOARD);
 }
 
-/* Optional player prefix right after the command word: "P1".."P4" (no prefix = player 1, the old game's form).
+/* Optional player prefix right after the command word: "P1".."P8" (no prefix = player 1, the old game's form).
  * Multiplayer: the player number a stream / cabinet assigns is the port the game's commands carry. */
 static unsigned rave_take_port(const char **args)
 {

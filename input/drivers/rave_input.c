@@ -1,4 +1,4 @@
-/*  RAVE patch set for RetroArch - keyboard + lightgun fed by the game's pipe (VRCMD KEYINPUT / GUN).
+/*  RAVE patch set for RetroArch - keyboard, lightgun and trackball fed by the game's pipe (VRCMD KEYINPUT / GUN / MINPUT).
  *
  *  RetroArch is free software: you can redistribute it and/or modify it under the terms
  *  of the GNU General Public License as published by the Free Software Foundation,
@@ -72,7 +72,10 @@ static void *rave_input_init(const char *joypad_driver)
    return (void*)-1;
 }
 
-static void rave_input_poll(void *data) { }
+static void rave_input_poll(void *data)
+{
+   rave_mouse_poll();
+}
 
 static int16_t rave_input_state(
       void *data,
@@ -157,8 +160,14 @@ static int16_t rave_input_state(
          {
             case RETRO_DEVICE_ID_MOUSE_LEFT:
                return rave_mouse_button(port, id);
+            case RETRO_DEVICE_ID_MOUSE_X:
+            case RETRO_DEVICE_ID_MOUSE_Y:
+               /* Relative motion = the trackball / spinner counts from MINPUT (the gun stays absolute). */
+               if (device != RETRO_DEVICE_MOUSE || !st->input_enabled)
+                  break;
+               return id == RETRO_DEVICE_ID_MOUSE_X ? st->mouse_dx[port] : st->mouse_dy[port];
             default:
-               break; /* no relative motion: the gun is absolute */
+               break;
          }
          break;
 

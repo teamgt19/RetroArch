@@ -350,6 +350,21 @@ void rave_handle_vrcmd(const char *cmd)
          rave_st.pads[port].half_axes[axis] = (int16_t)value;
       }
    }
+   else if (string_is_equal(word, "MINPUT"))
+   {
+      /* MINPUT [P<n>] <dx> <dy>: trackball / spinner counts, added up until the core's next poll. */
+      unsigned port = rave_take_port(&args);
+      int dx = 0, dy = 0;
+      if (port < RAVE_MAX_PORTS && sscanf(args, "%d %d", &dx, &dy) >= 1)
+      {
+         int64_t x = (int64_t)rave_st.mouse_acc_x[port] + dx;
+         int64_t y = (int64_t)rave_st.mouse_acc_y[port] + dy;
+         if (x >  1000000) x =  1000000; else if (x < -1000000) x = -1000000;
+         if (y >  1000000) y =  1000000; else if (y < -1000000) y = -1000000;
+         rave_st.mouse_acc_x[port] = (int32_t)x;
+         rave_st.mouse_acc_y[port] = (int32_t)y;
+      }
+   }
    else if (string_is_equal(word, "KEYINPUT"))
    {
       bool down = string_starts_with(args, "DOWN");
@@ -374,6 +389,10 @@ void rave_handle_vrcmd(const char *cmd)
          for (i = 1; i < RAVE_KEYS; i++)
             rave_key(false, i);
          memset(rave_st.gun_trigger, 0, sizeof(rave_st.gun_trigger));
+         memset(rave_st.mouse_acc_x, 0, sizeof(rave_st.mouse_acc_x));
+         memset(rave_st.mouse_acc_y, 0, sizeof(rave_st.mouse_acc_y));
+         memset(rave_st.mouse_dx, 0, sizeof(rave_st.mouse_dx));
+         memset(rave_st.mouse_dy, 0, sizeof(rave_st.mouse_dy));
       }
    }
    else if (string_is_equal(word, "PAN"))
@@ -408,6 +427,22 @@ bool rave_spout_wanted(void)
       return false;
    core = runloop_state_get_ptr()->system.info.library_name;
    return !(core && string_is_equal(core, "WindowCast"));
+}
+
+void rave_mouse_poll(void)
+{
+   unsigned i;
+   for (i = 0; i < RAVE_MAX_PORTS; i++)
+   {
+      /* A frame takes at most one int16 of counts; anything over stays for the next frame. */
+      int32_t x = rave_st.mouse_acc_x[i], y = rave_st.mouse_acc_y[i];
+      if (x >  32767) x =  32767; else if (x < -32767) x = -32767;
+      if (y >  32767) y =  32767; else if (y < -32767) y = -32767;
+      rave_st.mouse_acc_x[i] -= x;
+      rave_st.mouse_acc_y[i] -= y;
+      rave_st.mouse_dx[i]     = (int16_t)x;
+      rave_st.mouse_dy[i]     = (int16_t)y;
+   }
 }
 
 int16_t rave_pad_axis(unsigned port, unsigned axis)

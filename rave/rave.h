@@ -57,6 +57,11 @@ typedef struct rave_state
    bool  gun_trigger[RAVE_MAX_PORTS];
    bool  gun_offscreen[RAVE_MAX_PORTS];
 
+   /* Trackball / spinner per port (MINPUT): counts the game sent since the last poll, and the delta the core reads
+    * this frame as its relative mouse (MAME's trackballs and dials). */
+   int32_t mouse_acc_x[RAVE_MAX_PORTS], mouse_acc_y[RAVE_MAX_PORTS];
+   int16_t mouse_dx[RAVE_MAX_PORTS], mouse_dy[RAVE_MAX_PORTS];
+
    /* PAN l1 l2 r1 r2 (speaker 1/2 -> left, speaker 1/2 -> right). */
    float pan[4];
    bool  pan_set;
@@ -87,6 +92,9 @@ void rave_send(const char *text);
 /* True when the frontend should send the core's frames by Spout: a --rave / --emuvr name, and not the capture core
  * (WindowCast sends its own Spout under the same name). */
 bool rave_spout_wanted(void);
+
+/* Once per input poll: the MINPUT counts gathered since the last poll become this frame's mouse deltas. */
+void rave_mouse_poll(void);
 
 /* Combined XInput-style axis for port (0 LX, 1 LY up+, 2 RX, 3 RY up+, 4 LT, 5 RT). */
 int16_t rave_pad_axis(unsigned port, unsigned axis);
